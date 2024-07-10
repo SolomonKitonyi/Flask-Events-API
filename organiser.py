@@ -3,6 +3,7 @@ from flask_restful import Api,Resource, reqparse
 from flask_jwt_extended import current_user, jwt_required
 from models import db, Event
 import datetime
+from auth import allow
 
 organiser_bp = Blueprint('organiser_bp',__name__, url_prefix='/organiser')
 
@@ -17,6 +18,7 @@ event_args.add_argument('date', type=str)
 class Events(Resource):
 
     @jwt_required()
+    @allow('organiser')
     def post(self):
         data = event_args.parse_args()
         event_date = datetime.datetime.now()
@@ -26,6 +28,7 @@ class Events(Resource):
         return {"msg":"event created Successfully"}
     
     @jwt_required()
+    @allow('organiser')
     def get(self):
         events = Event.query.filter_by(user_id=current_user.id).all()
         events = [event.to_dict() for event in events]

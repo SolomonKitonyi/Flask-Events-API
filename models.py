@@ -26,11 +26,13 @@ class Event(db.Model,SerializerMixin):
     reviews = db.relationship('Reviews', back_populates='event')
 
 
-class Booking(db.Model):
+class Booking(db.Model, SerializerMixin):
+    serialize_rules =('-event.bookings', '-user')
     __tablename__ = 'booking'
     id = db.Column(db.Integer, primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    ticket_no = db.Column(db.Integer)
     event = db.relationship('Event', back_populates='bookings')
     user = db.relationship('User', back_populates='bookings')
 
